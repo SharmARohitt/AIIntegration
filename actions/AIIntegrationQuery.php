@@ -6,8 +6,6 @@ use CController;
 use Exception;
 
 class AIIntegrationQuery extends CController {
-	private const GEMINI_HARDCODED_API_KEY = 'AIzaSyDhrKq1N5JK7tTv16lMwEXgizavJW0MAqs';
-
 	public function init(): void {
 		$this->disableCsrfValidation();
 	}
@@ -105,10 +103,6 @@ class AIIntegrationQuery extends CController {
 		$config_key = trim((string) ($provider_config['api_key'] ?? ''));
 		if ($config_key !== '') {
 			return $config_key;
-		}
-
-		if ($provider === 'gemini') {
-			return self::GEMINI_HARDCODED_API_KEY;
 		}
 
 		$env_map = [

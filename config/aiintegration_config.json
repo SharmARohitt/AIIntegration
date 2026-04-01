@@ -31,7 +31,7 @@
             "model": "gemini-flash-latest",
             "temperature": 0.7,
             "max_tokens": 2048,
-            "api_key": "AIzaSyDhrKq1N5JK7tTv16lMwEXgizavJW0MAqs"
+            "api_key": ""
         },
         "custom": {
             "enabled": false,
