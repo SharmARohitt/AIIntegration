@@ -226,7 +226,7 @@ window.AIIntegrationCore = (function() {
 
 		const credits = document.createElement('span');
 		credits.className = 'aiintegration-modal-credits';
-		credits.textContent = 'Developed by MonZphere';
+		credits.textContent = 'Developed by Rohit Sharma';
 		footer.appendChild(credits);
 
 		const actionsWrap = document.createElement('div');

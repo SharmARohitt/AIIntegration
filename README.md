@@ -1,6 +1,6 @@
 # AI Integration for Zabbix
 
-Zabbix frontend module that adds AI-powered analysis and quick actions across monitoring workflows. Developed by [Monzphere](https://monzphere.com).
+Zabbix frontend module that adds AI-powered analysis and quick actions across monitoring workflows. Developed by Rohit Sharma.
 
 <img width="633" height="405" alt="image" src="https://github.com/user-attachments/assets/7316f3d9-d092-40cd-a819-0f06245148b4" />
 <img width="611" height="383" alt="image" src="https://github.com/user-attachments/assets/0451a658-6ac2-4c1a-acf1-9332a194ab91" />
@@ -86,4 +86,4 @@ MIT. See [LICENSE](LICENSE).
 
 ## Author
 
-Monzphere
+Rohit Sharma

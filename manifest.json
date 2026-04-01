@@ -5,8 +5,8 @@
     "version": "1.0.0",
     "namespace": "AIIntegration",
     "description": "Integration of AI with quick actions in Zabbix.",
-    "author": "MonZphere",
-    "url": "monzphere.com",
+    "author": "rohit sharma",
+    
     "actions": {
         "aiintegration.settings": {
             "class": "AIIntegrationSettings",

@@ -39,8 +39,8 @@ class AIIntegrationSettingsSave extends CController {
 			], $existing),
 			'gemini' => $this->buildProviderConfig('gemini', [
 				'enabled' => !empty($_POST['gemini_enabled']),
-				'endpoint' => trim($_POST['gemini_endpoint'] ?? 'https://generativelanguage.googleapis.com/v1beta/models'),
-				'model' => trim($_POST['gemini_model'] ?? 'gemini-pro'),
+				'endpoint' => trim($_POST['gemini_endpoint'] ?? 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent'),
+				'model' => trim($_POST['gemini_model'] ?? 'gemini-flash-latest'),
 				'temperature' => $this->toFloat($_POST['gemini_temperature'] ?? 0.7),
 				'max_tokens' => $this->toInt($_POST['gemini_max_tokens'] ?? 2048)
 			], $existing),
@@ -55,6 +55,7 @@ class AIIntegrationSettingsSave extends CController {
 		];
 
 		$config = [
+			'proxy' => $this->buildProxyConfig($existing),
 			'providers' => $providers,
 			'default_provider' => trim($_POST['default_provider'] ?? 'openai'),
 			'quick_actions' => [
@@ -78,6 +79,24 @@ class AIIntegrationSettingsSave extends CController {
 		$this->setResponse(new CControllerResponseRedirect(
 			(new CUrl('zabbix.php'))->setArgument('action', 'aiintegration.settings')
 		));
+	}
+
+	private function buildProxyConfig(array $existing): array {
+		$proxy_password = trim($_POST['proxy_password'] ?? '');
+
+		if ($proxy_password === '' || $proxy_password === '********') {
+			$proxy_password = $existing['proxy']['password'] ?? '';
+		}
+
+		return [
+			'enabled' => !empty($_POST['proxy_enabled']),
+			'host' => trim($_POST['proxy_host'] ?? ''),
+			'port' => $this->toInt($_POST['proxy_port'] ?? 3128, 3128),
+			'username' => trim($_POST['proxy_username'] ?? ''),
+			'password' => $proxy_password,
+			'type' => strtolower(trim($_POST['proxy_type'] ?? 'http')),
+			'verify_ssl' => !empty($_POST['proxy_verify_ssl'])
+		];
 	}
 
 	private function buildProviderConfig(string $provider, array $input, array $existing): array {

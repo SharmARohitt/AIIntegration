@@ -5,6 +5,7 @@ $config = file_exists($config_path) ? json_decode(file_get_contents($config_path
 
 $providers = $config['providers'] ?? [];
 $default_provider = $config['default_provider'] ?? 'openai';
+$proxy = $config['proxy'] ?? [];
 
 $quick_actions = array_merge([
 	'problems' => true,
@@ -27,6 +28,14 @@ $openai_api_key = !empty($openai['api_key']) ? '********' : '';
 $anthropic_api_key = !empty($anthropic['api_key']) ? '********' : '';
 $gemini_api_key = !empty($gemini['api_key']) ? '********' : '';
 $custom_api_key = !empty($custom['api_key']) ? '********' : '';
+
+$proxy_enabled = !empty($proxy['enabled']);
+$proxy_host = $proxy['host'] ?? '';
+$proxy_port = (int) ($proxy['port'] ?? 3128);
+$proxy_username = $proxy['username'] ?? '';
+$proxy_password = !empty($proxy['password']) ? '********' : '';
+$proxy_type = $proxy['type'] ?? 'http';
+$proxy_verify_ssl = !empty($proxy['verify_ssl']);
 
 $page = (new CHtmlPage())
 	->setTitle(_('AI Integration'))
@@ -71,6 +80,70 @@ $general_grid = (new CFormGrid())
 				->addClass('aiintegration-note')
 				->setAttribute('id', 'aiintegration-config-path')
 		)
+	]);
+
+$proxy_grid = (new CFormGrid())
+	->addItem([
+		new CLabel(_('Enable proxy'), 'proxy_enabled'),
+		new CFormField((new CCheckBox('proxy_enabled'))->setLabel(_('Enabled'))->setChecked($proxy_enabled))
+	])
+	->addItem([
+		new CLabel(_('Proxy host'), 'proxy_host'),
+		new CFormField(
+			(new CTextBox('proxy_host', $proxy_host))
+				->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
+				->setAttribute('placeholder', 'proxy.example.com or 192.168.1.1')
+				->setId('proxy_host')
+		)
+	])
+	->addItem([
+		new CLabel(_('Proxy port'), 'proxy_port'),
+		new CFormField(
+			(new CTextBox('proxy_port', (string) $proxy_port))
+				->setWidth(ZBX_TEXTAREA_SMALL_WIDTH)
+				->setAttribute('placeholder', '3128')
+				->setAttribute('type', 'number')
+				->setAttribute('min', '1')
+				->setAttribute('max', '65535')
+				->setId('proxy_port')
+		)
+	])
+	->addItem([
+		new CLabel(_('Proxy type'), 'proxy_type'),
+		new CFormField(
+			(new CSelect('proxy_type'))
+				->setValue($proxy_type)
+				->addOptions([
+					new CSelectOption('http', 'HTTP/HTTPS'),
+					new CSelectOption('socks4', 'SOCKS4'),
+					new CSelectOption('socks5', 'SOCKS5')
+				])
+				->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
+				->setId('proxy_type')
+		)
+	])
+	->addItem([
+		new CLabel(_('Username (Optional)'), 'proxy_username'),
+		new CFormField(
+			(new CTextBox('proxy_username', $proxy_username))
+				->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
+				->setAttribute('autocomplete', 'off')
+				->setId('proxy_username')
+		)
+	])
+	->addItem([
+		new CLabel(_('Password (Optional)'), 'proxy_password'),
+		new CFormField(
+			(new CTextBox('proxy_password', $proxy_password))
+				->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
+				->setAttribute('type', 'password')
+				->setAttribute('autocomplete', 'off')
+				->setId('proxy_password')
+		)
+	])
+	->addItem([
+		new CLabel(_('Verify SSL certificate'), 'proxy_verify_ssl'),
+		new CFormField((new CCheckBox('proxy_verify_ssl'))->setLabel(_('Verify SSL'))->setChecked($proxy_verify_ssl))
 	]);
 
 $openai_grid = (new CFormGrid())
@@ -177,7 +250,7 @@ $gemini_grid = (new CFormGrid())
 	->addItem([
 		new CLabel(_('API endpoint'), 'gemini_endpoint'),
 		new CFormField(
-			(new CTextBox('gemini_endpoint', $gemini['endpoint'] ?? 'https://generativelanguage.googleapis.com/v1beta/models'))
+			(new CTextBox('gemini_endpoint', $gemini['endpoint'] ?? 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent'))
 				->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
 				->setId('gemini_endpoint')
 		)
@@ -195,7 +268,7 @@ $gemini_grid = (new CFormGrid())
 	->addItem([
 		new CLabel(_('Model'), 'gemini_model'),
 		new CFormField(
-			(new CTextBox('gemini_model', $gemini['model'] ?? 'gemini-pro'))
+			(new CTextBox('gemini_model', $gemini['model'] ?? 'gemini-flash-latest'))
 				->setWidth(ZBX_TEXTAREA_STANDARD_WIDTH)
 				->setId('gemini_model')
 		)
@@ -276,6 +349,7 @@ $custom_grid = (new CFormGrid())
 
 $tabs = (new CTabView())
 	->addTab('general', _('General'), $general_grid)
+	->addTab('proxy', _('Proxy'), $proxy_grid)
 	->addTab('openai', _('OpenAI'), $openai_grid)
 	->addTab('anthropic', _('Anthropic'), $anthropic_grid)
 	->addTab('gemini', _('Gemini'), $gemini_grid)
